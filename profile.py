@@ -142,7 +142,8 @@ mgmtlan.best_effort = True
 # Construct the disk image URNs we're going to set the various nodes to load.
 #
 
-x86_ubuntu_disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
+#x86_ubuntu_disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
+x86_ubuntu_disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU14-64-STD'
 
 if params.OSType == 'ubuntu':
     chosenDiskImage = x86_ubuntu_disk_image
@@ -169,7 +170,7 @@ for cpname in computeNodeNames:
     cpnode.addService(RSpec.Install(url=TBURL, path="/tmp"))
 
     if params.node_type in ['xl170', 'r320', 'c6220']:
-        cpnode.addService(RSpec.Execute(shell="sh",command=TBCMD_default))
+        cpnode.addService(RSpec.Execute(shell="sh",command=TBCMD_rdma))
     else:
         cpnode.addService(RSpec.Execute(shell="sh",command=TBCMD_default))
     rspec.addResource(cpnode)
