@@ -62,9 +62,9 @@ apt-get -y install libsystemd-dev numactl neovim python-dev python-pip python3-d
 apt-get update
 
 # for OFED
-wget http://www.mellanox.com/downloads/ofed/mlnx_ofed-4.6-1.0.1.1/mlnx_ofed_linux-4.6-1.0.1.1-ubuntu16.04-x86_64.tgz
-tar xfz ./mlnx_ofed_linux-4.6-1.0.1.1-ubuntu16.04-x86_64.tgz
-sudo ./mlnx_ofed_linux-4.6-1.0.1.1-ubuntu16.04-x86_64/mlnxofedinstall --all --force
+wget http://www.mellanox.com/downloads/ofed/mlnx_ofed-4.6-1.0.1.1/mlnx_ofed_linux-4.6-1.0.1.1-ubuntu18.04-x86_64.tgz
+tar xfz ./mlnx_ofed_linux-4.6-1.0.1.1-ubuntu18.04-x86_64.tgz
+sudo ./mlnx_ofed_linux-4.6-1.0.1.1-ubuntu18.04-x86_64/mlnxofedinstall --all --force
 
 echo "options mlx4_core log_num_mgm_entry_size=-1" >> /etc/modprobe.d/mlnx.conf
 /etc/init.d/openibd  restart
