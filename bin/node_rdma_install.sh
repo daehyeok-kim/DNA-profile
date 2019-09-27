@@ -71,20 +71,20 @@ apt-get update
 sudo apt-get install linux-image-$(uname -r)-dbgsym
 
 # mount additional hard drive to /extra_disk
-mkdir /extra_disk
-sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/sdb
-  o # clear the in memory partition table
-  n # new partition
-  p # primary partition
-  1 # partition number 1
-    # default - start at beginning of disk
-    # default
-  w # write the partition table
-  q # and we're done
-EOF
-
-mkfs.ext4 /dev/sdb1
-mount /dev/sdb1 /extra_disk
+#mkdir /extra_disk
+#sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/sdb
+#  o # clear the in memory partition table
+#  n # new partition
+#  p # primary partition
+#  1 # partition number 1
+#    # default - start at beginning of disk
+#    # default
+#  w # write the partition table
+#  q # and we're done
+#EOF
+#
+#mkfs.ext4 /dev/sdb1
+#mount /dev/sdb1 /extra_disk
 
 # set the amount of locked memory. will require a reboot
 cat <<EOF  | tee /etc/security/limits.d/90-rmda.conf > /dev/null
@@ -92,9 +92,6 @@ cat <<EOF  | tee /etc/security/limits.d/90-rmda.conf > /dev/null
 * hard memlock unlimited
 EOF
 
-# allow pdsh to use ssh
-#echo "ssh" | tee /etc/pdsh/rcmd_default
-#
 sed -i 's/HostbasedAuthentication no/HostbasedAuthentication yes/' /etc/ssh/sshd_config
 cat <<EOF | tee -a /etc/ssh/ssh_config
     HostbasedAuthentication yes
