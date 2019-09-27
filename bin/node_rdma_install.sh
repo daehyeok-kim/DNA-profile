@@ -94,24 +94,26 @@ apt-get -y install libsystemd-dev numactl neovim python-dev python-pip python3-d
 
 # Install docker
 apt-get -y install apt-transport-https ca-certificates curl
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository \
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
    $(lsb_release -cs) \
    stable"
 
 apt-get update
-apt-get install docker-ce
+apt-get -y install docker-ce
+
+echo "{\"graph\":\"/extra_disk/docker\"}" > /etc/docker/daemon.json
 
 # Install kernel debug symbols
 echo "deb http://ddebs.ubuntu.com $(lsb_release -cs) main restricted universe multiverse
 deb http://ddebs.ubuntu.com $(lsb_release -cs)-updates main restricted universe multiverse
 deb http://ddebs.ubuntu.com $(lsb_release -cs)-proposed main restricted universe multiverse" | \
-sudo tee -a /etc/apt/sources.list.d/ddebs.list
+tee -a /etc/apt/sources.list.d/ddebs.list
 
-sudo apt install ubuntu-dbgsym-keyring
+apt install ubuntu-dbgsym-keyring
 apt-get update
-sudo apt-get install linux-image-$(uname -r)-dbgsym
+apt-get -y install linux-image-$(uname -r)-dbgsym
 
 # mount additional hard drive to /extra_disk
 mkdir /extra_disk
@@ -129,6 +131,8 @@ EOF
 mkfs.ext4 /dev/sdb1
 mount /dev/sdb1 /extra_disk
 
+mkdir /extra_disk/docker
+
 # set the amount of locked memory. will require a reboot
 cat <<EOF  | tee /etc/security/limits.d/90-rmda.conf > /dev/null
 * soft memlock unlimited
@@ -138,7 +142,7 @@ EOF
 # for OFED
 wget https://www.mellanox.com/downloads/ofed/MLNX_OFED-4.6-1.0.1.1/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-x86_64.tgz
 tar xfz ./MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-x86_64.tgz
-sudo ./MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-x86_64/mlnxofedinstall --all --force
+./MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-x86_64/mlnxofedinstall --all --force
 
 echo "options mlx4_core log_num_mgm_entry_size=-1" >> /etc/modprobe.d/mlnx.conf
 
