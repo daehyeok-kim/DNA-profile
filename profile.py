@@ -169,7 +169,7 @@ for cpname in computeNodeNames:
     cpnode.addService(RSpec.Install(url=TBURL, path="/tmp"))
 
     if params.node_type in ['xl170', 'r320', 'c6220']:
-        cpnode.addService(RSpec.Execute(shell="sh",command=TBCMD_rdma))
+        cpnode.addService(RSpec.Execute(shell="sh",command=TBCMD_default))
     else:
         cpnode.addService(RSpec.Execute(shell="sh",command=TBCMD_default))
     rspec.addResource(cpnode)
