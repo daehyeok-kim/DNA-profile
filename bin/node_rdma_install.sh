@@ -58,16 +58,17 @@ apt-get -y install build-essential bcc bin86 gawk bridge-utils iproute libcurl3 
 apt-get -y install make gcc libc6-dev zlib1g-dev python python-dev python-twisted libncurses5-dev patch libvncserver-dev libsdl-dev libjpeg-dev
 apt-get -y install iasl libbz2-dev e2fslibs-dev git-core uuid-dev ocaml ocaml-findlib libx11-dev bison flex xz-utils libyajl-dev
 apt-get -y install gettext libpixman-1-dev libaio-dev markdown pandoc python-numpy libc6-dev-i386 lzma lzma-dev liblzma-dev
-apt-get -y install libsystemd-dev numactl neovim python-dev python-pip python3-dev python3-pip lxc
+apt-get -y install libsystemd-dev numactl neovim python-dev python-pip python3-dev python3-pip systemtap lxc
+
+# Install kernel debug symbols
+echo "deb http://ddebs.ubuntu.com $(lsb_release -cs) main restricted universe multiverse
+deb http://ddebs.ubuntu.com $(lsb_release -cs)-updates main restricted universe multiverse
+deb http://ddebs.ubuntu.com $(lsb_release -cs)-proposed main restricted universe multiverse" | \
+sudo tee -a /etc/apt/sources.list.d/ddebs.list
+
+sudo apt install ubuntu-dbgsym-keyring
 apt-get update
-
-# for OFED
-wget https://www.mellanox.com/downloads/ofed/MLNX_OFED-4.6-1.0.1.1/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64.tgz
-tar xfz ./MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64.tgz
-sudo ./MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64/mlnxofedinstall --all --force
-
-echo "options mlx4_core log_num_mgm_entry_size=-1" >> /etc/modprobe.d/mlnx.conf
-/etc/init.d/openibd  restart
+sudo apt-get install linux-image-$(uname -r)-dbgsym
 
 # mount additional hard drive to /extra_disk
 mkdir /extra_disk
@@ -128,6 +129,13 @@ done
 
 # for passwordless ssh to take effect
 service ssh restart
+
+# for OFED
+wget https://www.mellanox.com/downloads/ofed/MLNX_OFED-4.6-1.0.1.1/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-x86_64.tgz
+tar xfz ./MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-x86_64.tgz
+sudo ./MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-x86_64/mlnxofedinstall --all --force
+
+echo "options mlx4_core log_num_mgm_entry_size=-1" >> /etc/modprobe.d/mlnx.conf
 
 # done
 rm -f $SETUPFLAG
