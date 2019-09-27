@@ -142,7 +142,7 @@ mgmtlan.best_effort = True
 # Construct the disk image URNs we're going to set the various nodes to load.
 #
 
-x86_ubuntu_disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU16-64-STD'
+x86_ubuntu_disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
 
 if params.OSType == 'ubuntu':
     chosenDiskImage = x86_ubuntu_disk_image
