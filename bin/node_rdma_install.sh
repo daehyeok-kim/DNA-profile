@@ -91,6 +91,7 @@ apt-get -y install make gcc libc6-dev zlib1g-dev python python-dev python-twiste
 apt-get -y install iasl libbz2-dev e2fslibs-dev git-core uuid-dev ocaml ocaml-findlib libx11-dev bison flex xz-utils libyajl-dev
 apt-get -y install gettext libpixman-1-dev libaio-dev markdown pandoc python-numpy libc6-dev-i386 lzma lzma-dev liblzma-dev
 apt-get -y install libsystemd-dev numactl neovim python-dev python-pip python3-dev python3-pip systemtap
+pip3 install psutil
 
 # Install docker
 apt-get -y install apt-transport-https ca-certificates curl
