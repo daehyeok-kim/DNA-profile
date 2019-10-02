@@ -131,6 +131,7 @@ EOF
 
 mkfs.ext4 /dev/sdb1
 mount /dev/sdb1 /extra_disk
+echo "/dev/sdb1 /extra_disk ext4 defaults 0 0" >> /etc/fstab
 
 mkdir /extra_disk/docker
 
