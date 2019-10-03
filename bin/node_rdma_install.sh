@@ -148,6 +148,10 @@ tar xfz ./MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-x86_64.tgz
 
 echo "options mlx4_core log_num_mgm_entry_size=-1" >> /etc/modprobe.d/mlnx.conf
 
+echo 512 > /proc/sys/net/core/somaxconn
+echo "vm.overcommit_memory = 1" >> /etc/sysctl.conf
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+
 sed -i -r 's/GRUB_CMDLINE_LINUX_DEFAULT=\"(.*)\"/GRUB_CMDLINE_LINUX_DEFAULT=\"\1 cgroup_enable=memory swapaccount=1\"/' /etc/default/grub
 update-grub
 
