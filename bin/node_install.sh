@@ -81,9 +81,9 @@ done
 
 # expand /dev/sda1
 swapoff /dev/sda3
-parted /dev/sda rm 3 Yes
+parted /dev/sda 'rm 3 Yes'
 parted /dev/sda print
-parted /dev/sda resizepart 1 Yes 100%
+parted /dev/sda 'resizepart 1 Yes 100%'
 parted /dev/sda print
 resize2fs /dev/sda1
 
