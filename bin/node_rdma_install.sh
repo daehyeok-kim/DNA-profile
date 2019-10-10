@@ -95,13 +95,11 @@ mkswap /swapfile
 swapon /swapfile
 echo "/swapfile swap swap defaults 0 0" >> /etc/fstab
 
+# for building
 apt-get update
 apt-get -y install software-properties-common
-
-# for building
-apt-get install -y libtool autoconf automake build-essential vim htop tmux libnl-3-dev
-apt-get install -y libffi6 libffi-dev python-dev python-pip
-
+apt-get -y install libtool autoconf automake build-essential vim htop tmux libnl-3-dev
+apt-get -y install libffi6 libffi-dev python-dev python-pip
 apt-get -y install build-essential bcc bin86 gawk bridge-utils iproute libcurl3 libcurl4-openssl-dev bzip2 module-init-tools transfig tgif
 apt-get -y install make gcc libc6-dev zlib1g-dev python python-dev python-twisted libncurses5-dev patch libvncserver-dev libsdl-dev libjpeg-dev
 apt-get -y install iasl libbz2-dev e2fslibs-dev git-core uuid-dev ocaml ocaml-findlib libx11-dev bison flex xz-utils libyajl-dev
@@ -120,17 +118,13 @@ add-apt-repository \
 apt-get update
 apt-get -y install docker-ce
 
-echo "{\"graph\":\"/extra_disk/docker\"}" > /etc/docker/daemon.json
-
 # Install kernel debug symbols
 echo "deb http://ddebs.ubuntu.com $(lsb_release -cs) main restricted universe multiverse
 deb http://ddebs.ubuntu.com $(lsb_release -cs)-updates main restricted universe multiverse
 deb http://ddebs.ubuntu.com $(lsb_release -cs)-proposed main restricted universe multiverse" | \
 tee -a /etc/apt/sources.list.d/ddebs.list
 
-apt install ubuntu-dbgsym-keyring
-apt-get update
-apt-get -y install linux-image-$(uname -r)-dbgsym
+apt-get -y install ubuntu-dbgsym-keyring linux-image-$(uname -r)-dbgsym
 
 # mount additional hard drive to /extra_disk
 #sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/sdb
