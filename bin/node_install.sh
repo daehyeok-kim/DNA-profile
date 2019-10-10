@@ -79,29 +79,6 @@ for each in $HOSTS localhost; do
   ssh-keyscan $(grep $each /etc/hosts|awk '{print $1}') >> /etc/ssh/ssh_known_hosts
 done
 
-# expand /dev/sda1
-swapoff /dev/sda3
-#parted /dev/sda 'rm 3 Yes'
-#parted /dev/sda print
-#parted /dev/sda 'resizepart 1 Yes 100%'
-#parted /dev/sda 'resizepart 1 Yes 100%'
-sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | parted /dev/sda rm 3
-  Yes
-EOF
-#parted /dev/sda print
-sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | parted /dev/sda resizepart 1
-  Yes
-  100%
-EOF
-resize2fs /dev/sda1
-
-# allocate new swap space
-dd if=/dev/zero of=/swapfile bs=1024 count=3145728
-chmod 600 /swapfile
-mkswap /swapfile
-swapon /swapfile
-echo "/swapfile swap swap defaults 0 0" >> /etc/fstab
-
 # for building
 apt-get update
 apt-get -y install software-properties-common
