@@ -81,15 +81,13 @@ done
 
 # expand /dev/sda1
 swapoff /dev/sda3
-sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | parted /dev/sda
-  rm 3 # delete the default swap partition (/dev/sda3)
-  resizepart 1 # resize partition 1 (/dev/sda1)
-  -0 # use the entire disk
-  quit # done
-EOF
-
+parted /dev/sda rm 3 Yes
+parted /dev/sda print
+parted /dev/sda resizepart 1 Yes 100%
+parted /dev/sda print
 resize2fs /dev/sda1
 
+# allocate new swap space
 dd if=/dev/zero of=/swapfile bs=1024 count=3145728
 chmod 600 /swapfile
 mkswap /swapfile
