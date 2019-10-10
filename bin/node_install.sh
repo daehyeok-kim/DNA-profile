@@ -43,48 +43,10 @@ EOF
 chmod +x /etc/profile.d/firstboot.sh
 
 export DEBIAN_FRONTEND=noninteractive
-#sed -i -r 's/GRUB_CMDLINE_LINUX_DEFAULT=\"(.*)\"/GRUB_CMDLINE_LINUX_DEFAULT=\"\1 processor.max_cstate=1 intel_idle.max_cstate=0 default_hugepagesz=1GB hugepagesz=1G hugepages=4\"/' /etc/default/grub
-#sed -i -r 's/GRUB_CMDLINE_LINUX_DEFAULT=\"(.*)\"/GRUB_CMDLINE_LINUX_DEFAULT=\"\1 processor.max_cstate=1 intel_idle.max_cstate=0 \"/' /etc/default/grub
-#update-grub
-
-#echo 'auto xenbr0iface xenbr0 inet dhcp\nbridge_ports enp1s0f0\n' >> /etc/network/interfaces
 
 echo "MaxSessions 20" >> /etc/ssh/sshd_config
 
-apt-get update
-apt-get -y install software-properties-common
-add-apt-repository -y ppa:neovim-ppa/stable
-apt-get update
-
-# for building
-apt-get install -y libtool autoconf automake build-essential vim htop tmux libnl-3-dev
-apt-get install -y libffi6 libffi-dev python-dev python-pip 
-
-apt-get -y install build-essential
-apt-get -y install bcc bin86 gawk bridge-utils iproute libcurl3 libcurl4-openssl-dev bzip2 module-init-tools transfig tgif 
-apt-get -y install make gcc libc6-dev zlib1g-dev python python-dev python-twisted libncurses5-dev patch libvncserver-dev libsdl-dev libjpeg-dev
-apt-get -y install iasl libbz2-dev e2fslibs-dev git-core uuid-dev ocaml ocaml-findlib libx11-dev bison flex xz-utils libyajl-dev
-apt-get -y install gettext libpixman-1-dev libaio-dev markdown pandoc python-numpy
-apt-get -y install libc6-dev-i386
-apt-get -y install lzma lzma-dev liblzma-dev
-apt-get -y install libsystemd-dev numactl
-apt-get -y install neovim
-apt-get -y install python-dev python-pip python3-dev python3-pip
-
-apt-get update
-
-mkdir /extra_disk
-/usr/local/etc/emulab/mkextrafs.pl /extra_disk
-
-# set the amount of locked memory. will require a reboot
-cat <<EOF  | tee /etc/security/limits.d/90-rmda.conf > /dev/null
-* soft memlock unlimited
-* hard memlock unlimited
-EOF
-
 # allow pdsh to use ssh
-#echo "ssh" | tee /etc/pdsh/rcmd_default
-#
 sed -i 's/HostbasedAuthentication no/HostbasedAuthentication yes/' /etc/ssh/sshd_config
 cat <<EOF | tee -a /etc/ssh/ssh_config
     HostbasedAuthentication yes
@@ -117,8 +79,46 @@ for each in $HOSTS localhost; do
   ssh-keyscan $(grep $each /etc/hosts|awk '{print $1}') >> /etc/ssh/ssh_known_hosts
 done
 
-# for passwordless ssh to take effect
-service ssh restart
+# expand /dev/sda1
+swapoff /dev/sda3
+sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | parted /dev/sda
+  rm 3 # delete the default swap partition (/dev/sda3)
+  resizepart 1 # resize partition 1 (/dev/sda1)
+  -0 # use the entire disk
+  quit # done
+EOF
+
+resize2fs /dev/sda1
+
+dd if=/dev/zero of=/swapfile bs=1024 count=3145728
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+echo "/swapfile swap swap defaults 0 0" >> /etc/fstab
+
+# for building
+apt-get update
+apt-get -y install software-properties-common
+add-apt-repository -y ppa:neovim-ppa/stable
+
+apt-get -y install libtool autoconf automake build-essential vim htop tmux libnl-3-dev
+apt-get -y install libffi6 libffi-dev python-dev python-pip 
+apt-get -y install build-essential
+apt-get -y install bcc bin86 gawk bridge-utils iproute libcurl3 libcurl4-openssl-dev bzip2 module-init-tools transfig tgif 
+apt-get -y install make gcc libc6-dev zlib1g-dev python python-dev python-twisted libncurses5-dev patch libvncserver-dev libsdl-dev libjpeg-dev
+apt-get -y install iasl libbz2-dev e2fslibs-dev git-core uuid-dev ocaml ocaml-findlib libx11-dev bison flex xz-utils libyajl-dev
+apt-get -y install gettext libpixman-1-dev libaio-dev markdown pandoc python-numpy
+apt-get -y install libc6-dev-i386
+apt-get -y install lzma lzma-dev liblzma-dev
+apt-get -y install libsystemd-dev numactl
+apt-get -y install neovim
+apt-get -y install python-dev python-pip python3-dev python3-pip
+
+# set the amount of locked memory. will require a reboot
+cat <<EOF  | tee /etc/security/limits.d/90-rmda.conf > /dev/null
+* soft memlock unlimited
+* hard memlock unlimited
+EOF
 
 # done
 rm -f $SETUPFLAG
