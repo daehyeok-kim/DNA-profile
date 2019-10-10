@@ -78,9 +78,25 @@ for each in $HOSTS localhost; do
   ssh-keyscan $(grep $each /etc/hosts|awk '{print $1}') >> /etc/ssh/ssh_known_hosts
 done
 
+# expand /dev/sda1
+swapoff /dev/sda3
+sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | parted /dev/sda
+  rm 3 # delete the default swap partition (/dev/sda3)
+  resizepart 1 # resize partition 1 (/dev/sda1)
+  -0 # use the entire disk
+  quit # done
+EOF
+
+resize2fs /dev/sda1
+
+dd if=/dev/zero of=/swapfile bs=1024 count=3145728
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+echo "/swapfile swap swap defaults 0 0" >> /etc/fstab
+
 apt-get update
 apt-get -y install software-properties-common
-apt-get update
 
 # for building
 apt-get install -y libtool autoconf automake build-essential vim htop tmux libnl-3-dev
@@ -117,23 +133,20 @@ apt-get update
 apt-get -y install linux-image-$(uname -r)-dbgsym
 
 # mount additional hard drive to /extra_disk
-mkdir /extra_disk
-sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/sdb
-  o # clear the in memory partition table
-  n # new partition
-  p # primary partition
-  1 # partition number 1
-    # default - start at beginning of disk
-    # default
-  w # write the partition table
-  q # and we're done
-EOF
-
-mkfs.ext4 /dev/sdb1
-mount /dev/sdb1 /extra_disk
-echo "/dev/sdb1 /extra_disk ext4 defaults 0 0" >> /etc/fstab
-
-mkdir /extra_disk/docker
+#sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/sdb
+#  o # clear the in memory partition table
+#  n # new partition
+#  p # primary partition
+#  1 # partition number 1
+#    # default - start at beginning of disk
+#    # default
+#  w # write the partition table
+#  q # and we're done
+#EOF
+#
+#mkfs.ext4 /dev/sdb1
+#mount /dev/sdb1 /extra_disk
+#echo "/dev/sdb1 /extra_disk ext4 defaults 0 0" >> /etc/fstab
 
 # set the amount of locked memory. will require a reboot
 cat <<EOF  | tee /etc/security/limits.d/90-rmda.conf > /dev/null
