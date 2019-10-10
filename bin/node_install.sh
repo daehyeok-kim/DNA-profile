@@ -81,11 +81,18 @@ done
 
 # expand /dev/sda1
 swapoff /dev/sda3
-parted /dev/sda 'rm 3 Yes'
-parted /dev/sda print
-parted /dev/sda 'resizepart 1 Yes 100%'
-parted /dev/sda 'resizepart 1 Yes 100%'
-parted /dev/sda print
+#parted /dev/sda 'rm 3 Yes'
+#parted /dev/sda print
+#parted /dev/sda 'resizepart 1 Yes 100%'
+#parted /dev/sda 'resizepart 1 Yes 100%'
+sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | parted /dev/sda rm 3
+  Yes
+EOF
+#parted /dev/sda print
+sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | parted /dev/sda resizepart 1
+  Yes
+  100%
+EOF
 resize2fs /dev/sda1
 
 # allocate new swap space
