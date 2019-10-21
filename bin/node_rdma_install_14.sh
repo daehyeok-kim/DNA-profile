@@ -29,7 +29,7 @@ elif [ -f $FLAG ]; then
   if [ -z "$HOSTS" ]; then
   # single host in cluster
     echo "***********************************************************"
-    echo -e "RDMA node setup complete"
+    echo -e "RDMA node setup complete (run /etc/profile.d/init.sh)"
     echo "***********************************************************"
   else
     echo "*************************************************************************"
@@ -41,27 +41,7 @@ $HOSTS\n"
 fi
 EOF
 chmod +x /etc/profile.d/firstboot.sh
-
-# expand /dev/sda1
-swapoff /dev/sda3
-(
-echo 'Yes'
-) | parted /dev/sda rm 1
-#parted /dev/sda 'rm 3 Yes'
-parted /dev/sda print
-(
-echo 'Yes'
-echo '100%'
-) | parted /dev/sda resizepart 1
-#parted /dev/sda 'resizepart 1 Yes 100%'
-parted /dev/sda print
-resize2fs /dev/sda1
-# allocate new swap space
-dd if=/dev/zero of=/swapfile bs=1024 count=3145728
-chmod 600 /swapfile
-mkswap /swapfile
-swapon /swapfile
-echo "/swapfile swap swap defaults 0 0" >> /etc/fstab
+cp /tmp/DNA-profile-master/bin/init.sh /etc/profile.d/init.sh
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -114,18 +94,6 @@ apt-get -y install gettext libpixman-1-dev libaio-dev markdown pandoc python-num
 apt-get -y install libsystemd-dev numactl neovim python-dev python-pip python3-dev python3-pip systemtap
 pip3 install psutil
 
-# Install docker
-apt-get -y install apt-transport-https ca-certificates curl
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable"
-
-apt-get update
-apt-get -y install docker-ce
-
-echo "{\"graph\":\"/extra_disk/docker\"}" > /etc/docker/daemon.json
 
 # Install kernel debug symbols
 echo "deb http://ddebs.ubuntu.com $(lsb_release -cs) main restricted universe multiverse
@@ -153,8 +121,6 @@ EOF
 mkfs.ext4 /dev/sdb1
 mount /dev/sdb1 /extra_disk
 echo "/dev/sdb1 /extra_disk ext4 defaults 0 0" >> /etc/fstab
-
-mkdir /extra_disk/docker
 
 # set the amount of locked memory. will require a reboot
 cat <<EOF  | tee /etc/security/limits.d/90-rmda.conf > /dev/null
