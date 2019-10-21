@@ -7,10 +7,10 @@ from lxml import etree as ET
 import crypt
 import random
 
-# Don't want this as a param yet
 TBURL = "https://github.com/daehyeok-kim/DNA-profile/archive/master.tar.gz"
 TBCMD_default = "sudo mkdir -p /root/setup && sudo -H /tmp/DNA-profile-master/bin/node_install.sh 2>&1 | sudo tee /root/setup/node-setup.log.$(date +'%Y%m%d%H%M%S')"
-TBCMD_rdma = "sudo mkdir -p /root/setup && sudo -H /tmp/DNA-profile-master/bin/node_rdma_install.sh 2>&1 | sudo tee /root/setup/node-setup.log.$(date +'%Y%m%d%H%M%S')"
+TBCMD_rdma_18 = "sudo mkdir -p /root/setup && sudo -H /tmp/DNA-profile-master/bin/node_rdma_install_18.sh 2>&1 | sudo tee /root/setup/node-setup.log.$(date +'%Y%m%d%H%M%S')"
+TBCMD_rdma_14 = "sudo mkdir -p /root/setup && sudo -H /tmp/DNA-profile-master/bin/node_rdma_install_14.sh 2>&1 | sudo tee /root/setup/node-setup.log.$(date +'%Y%m%d%H%M%S')"
 
 #
 # Create our in-memory model of the RSpec -- the resources we're going to request
@@ -29,7 +29,7 @@ pc = portal.Context()
 pc.defineParameter("computeNodeCount", "Number of compute nodes",
                    portal.ParameterType.INTEGER, 1)
 pc.defineParameter("OSType","OS Type",
-                   portal.ParameterType.STRING,"ubuntu",[("ubuntu","Ubuntu")],
+        portal.ParameterType.STRING,"ubuntu",[("ubuntu 14.04","Ubuntu 14.04"), ("ubuntu 18.04", "Ubuntu 18.04")],
                    longDescription="Ubuntu for the OS distribution.")
 pc.defineParameter("node_type", "Hardware spec of nodes <br> Refer to manuals at <a href=\"http://docs.aptlab.net/hardware.html#%28part._apt-cluster%29\">APT</a> for more details.",
          portal.ParameterType.NODETYPE, "c220g5", legalValues=[("c220g5","Wisc c220g5"), ("c240g5", "Wisc c240g5 (GPU)"), ("xl170", "Utah xl170 (CX4)"), ("r320", "APT r320 (CX3)"),("c6220","APT c6220 (CX3)")], advanced=False, groupId=None)
@@ -142,10 +142,13 @@ mgmtlan.best_effort = True
 # Construct the disk image URNs we're going to set the various nodes to load.
 #
 
-x86_ubuntu_disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
+x86_ubuntu_18_disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
+x86_ubuntu_14_disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU14-64-STD'
 
-if params.OSType == 'ubuntu':
-    chosenDiskImage = x86_ubuntu_disk_image
+if params.OSType == 'ubuntu 14.04':
+    chosenDiskImage = x86_ubuntu_14_disk_image
+else:
+    chosenDiskImage = x86_ubuntu_18_disk_image
 
 computeNodeNames = []
 computeNodeList = ""
@@ -169,7 +172,10 @@ for cpname in computeNodeNames:
     cpnode.addService(RSpec.Install(url=TBURL, path="/tmp"))
 
     if params.node_type in ['xl170', 'r320', 'c6220']:
-        cpnode.addService(RSpec.Execute(shell="sh",command=TBCMD_rdma))
+        if params.OSType == "ubuntu 14.04":
+            cpnode.addService(RSpec.Execute(shell="sh",command=TBCMD_rdma_14))
+        else:
+            cpnode.addService(RSpec.Execute(shell="sh",command=TBCMD_rdma_18))
     else:
         cpnode.addService(RSpec.Execute(shell="sh",command=TBCMD_default))
     rspec.addResource(cpnode)
