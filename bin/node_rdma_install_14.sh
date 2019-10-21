@@ -29,7 +29,7 @@ elif [ -f $FLAG ]; then
   if [ -z "$HOSTS" ]; then
   # single host in cluster
     echo "***********************************************************"
-    echo -e "RDMA node setup complete (run /etc/profile.d/init.sh)"
+    echo -e "RDMA node setup complete (run /init.sh)"
     echo "***********************************************************"
   else
     echo "*************************************************************************"
@@ -41,7 +41,8 @@ $HOSTS\n"
 fi
 EOF
 chmod +x /etc/profile.d/firstboot.sh
-cp /tmp/DNA-profile-master/bin/init.sh /etc/profile.d/init.sh
+cp /tmp/DNA-profile-master/bin/init.sh /init.sh
+chmod +x /init.sh
 
 export DEBIAN_FRONTEND=noninteractive
 
