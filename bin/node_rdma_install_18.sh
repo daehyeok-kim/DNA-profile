@@ -29,11 +29,11 @@ elif [ -f $FLAG ]; then
   if [ -z "$HOSTS" ]; then
   # single host in cluster
     echo "***********************************************************"
-    echo -e "RDMA node setup complete"
+    echo -e "RDMA node setup complete (run /init.sh)"
     echo "***********************************************************"
   else
     echo "*************************************************************************"
-    echo -e "RDMA node setup complete"
+    echo -e "RDMA node setup complete (run /init.sh)"
     echo -e "Your cluster has the following hosts:\n\
 $HOSTS\n"
     echo "*************************************************************************"
@@ -94,19 +94,6 @@ apt-get -y install iasl libbz2-dev e2fslibs-dev git-core uuid-dev ocaml ocaml-fi
 apt-get -y install gettext libpixman-1-dev libaio-dev markdown pandoc python-numpy libc6-dev-i386 lzma lzma-dev liblzma-dev
 apt-get -y install libsystemd-dev numactl neovim python-dev python-pip python3-dev python3-pip systemtap
 pip3 install psutil
-
-# Install docker
-apt-get -y install apt-transport-https ca-certificates curl
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable"
-
-apt-get update
-apt-get -y install docker-ce
-
-echo "{\"graph\":\"/extra_disk/docker\"}" > /etc/docker/daemon.json
 
 # Install kernel debug symbols
 echo "deb http://ddebs.ubuntu.com $(lsb_release -cs) main restricted universe multiverse
