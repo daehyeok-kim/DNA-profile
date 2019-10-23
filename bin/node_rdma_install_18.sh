@@ -41,6 +41,8 @@ $HOSTS\n"
 fi
 EOF
 chmod +x /etc/profile.d/firstboot.sh
+cp /tmp/DNA-profile-master/bin/init.sh /init.sh
+chmod +x /init.sh
 
 export DEBIAN_FRONTEND=noninteractive
 
