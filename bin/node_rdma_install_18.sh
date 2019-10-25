@@ -103,7 +103,7 @@ tee -a /etc/apt/sources.list.d/ddebs.list
 
 apt install ubuntu-dbgsym-keyring
 apt-get update
-apt-get -y install linux-image-$(uname -r)-dbgsym
+#apt-get -y install linux-image-$(uname -r)-dbgsym
 
 # mount additional hard drive to /extra_disk
 mkdir /extra_disk
