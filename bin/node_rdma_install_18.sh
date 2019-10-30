@@ -96,13 +96,13 @@ apt-get -y install libsystemd-dev numactl neovim python-dev python-pip python3-d
 pip3 install psutil
 
 # Install kernel debug symbols
-echo "deb http://ddebs.ubuntu.com $(lsb_release -cs) main restricted universe multiverse
-deb http://ddebs.ubuntu.com $(lsb_release -cs)-updates main restricted universe multiverse
-deb http://ddebs.ubuntu.com $(lsb_release -cs)-proposed main restricted universe multiverse" | \
-tee -a /etc/apt/sources.list.d/ddebs.list
-
-apt install ubuntu-dbgsym-keyring
-apt-get update
+#echo "deb http://ddebs.ubuntu.com $(lsb_release -cs) main restricted universe multiverse
+#deb http://ddebs.ubuntu.com $(lsb_release -cs)-updates main restricted universe multiverse
+#deb http://ddebs.ubuntu.com $(lsb_release -cs)-proposed main restricted universe multiverse" | \
+#tee -a /etc/apt/sources.list.d/ddebs.list
+#
+#apt install ubuntu-dbgsym-keyring
+#apt-get update
 #apt-get -y install linux-image-$(uname -r)-dbgsym
 
 # mount additional hard drive to /extra_disk
@@ -119,10 +119,10 @@ sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/sdb
 EOF
 
 mkfs.ext4 /dev/sdb1
-mount /dev/sdb1 /extra_disk
-echo "/dev/sdb1 /extra_disk ext4 defaults 0 0" >> /etc/fstab
-
-mkdir /extra_disk/docker
+#mount /dev/sdb1 /extra_disk
+#echo "/dev/sdb1 /extra_disk ext4 defaults 0 0" >> /etc/fstab
+#
+#mkdir /extra_disk/docker
 
 # set the amount of locked memory. will require a reboot
 cat <<EOF  | tee /etc/security/limits.d/90-rmda.conf > /dev/null
