@@ -105,8 +105,7 @@ pip3 install psutil
 #apt-get update
 #apt-get -y install linux-image-$(uname -r)-dbgsym
 
-# mount additional hard drive to /extra_disk
-mkdir /extra_disk
+# make a partition /dev/sdb1
 sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/sdb
   o # clear the in memory partition table
   n # new partition
@@ -119,10 +118,6 @@ sed -e 's/\s*\([\+0-9a-zA-Z]*\).*/\1/' << EOF | fdisk /dev/sdb
 EOF
 
 mkfs.ext4 /dev/sdb1
-#mount /dev/sdb1 /extra_disk
-#echo "/dev/sdb1 /extra_disk ext4 defaults 0 0" >> /etc/fstab
-#
-#mkdir /extra_disk/docker
 
 # set the amount of locked memory. will require a reboot
 cat <<EOF  | tee /etc/security/limits.d/90-rmda.conf > /dev/null
