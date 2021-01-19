@@ -32,7 +32,7 @@ pc.defineParameter("OSType","OS Type",
         portal.ParameterType.STRING,"ubuntu 18.04", legalValues=[("ubuntu 14.04","Ubuntu 14.04"), ("ubuntu 16.04", "Ubuntu 16.04"), ("ubuntu 18.04", "Ubuntu 18.04")],
                    longDescription="Ubuntu for the OS distribution.")
 pc.defineParameter("node_type", "Hardware spec of nodes <br> Refer to manuals at <a href=\"http://docs.aptlab.net/hardware.html#%28part._apt-cluster%29\">APT</a> for more details.",
-         portal.ParameterType.NODETYPE, "c220g5", legalValues=[("c220g5","Wisc c220g5"), ("c240g5", "Wisc c240g5 (GPU)"), ("xl170", "Utah xl170 (CX4)"), ("r320", "APT r320 (CX3)"),("c6220","APT c6220 (CX3)"),('r7525','Clemson r7525')], advanced=False, groupId=None)
+         portal.ParameterType.NODETYPE, "c220g5", legalValues=[("c220g5","Wisc c220g5"), ("c240g5", "Wisc c240g5 (GPU)"), ("xl170", "Utah xl170 (CX4)"), ("r320", "APT r320 (CX3)"),("c6220","APT c6220 (CX3)"),('r7525','Clemson r7525'),('d6515','Utah d6515')], advanced=False, groupId=None)
 pc.defineParameter("computeHostBaseName", "Base name of compute node(s)",
                    portal.ParameterType.STRING, "cp", advanced=True,
                    longDescription="The base string of the short name of the compute nodes (node names will look like cp-1, cp-2, ... You shold leave this alone unless you really want the hostname to change.")
